@@ -3,7 +3,7 @@ import { IUser } from '../interfaces/userInterfaces'; // Import the IUser interf
 import { readUsersFromJson, writeUsersToJson } from '../utils/helpers/fileHelpers';
 import mongoose from 'mongoose';
 
-//Database may fuck up
+//Database may fuck up thats why using user.json optionally
 export const isUsingMongoDB = (): boolean => {
     return !!process.env.MONGO_URL;
 };
@@ -93,16 +93,16 @@ export const findUserById = async (id:any): Promise<IUser | null> => {
     }
 };
 
-export const saveUpdatedUser = async (id: any, userData: any): Promise<any> => {
+export const saveUserandUpdate = async (id: any, userData: any): Promise<any> => {
     if (isUsingMongoDB()) {
     
         // If using MongoDB, save  and update using the User model
-        await User.findByIdAndUpdate(id,{$set:userData},{new: true, runValidators:true})
+       const updatedUser = await User.findByIdAndUpdate(id,{$set:userData},{new: true, runValidators:true})
+        return updatedUser;
     } else {
         // If not using MongoDB, save to JSON file
-        const users = readUsersFromJson();
-        users.push(userData);
-        writeUsersToJson(users);
-        return userData; // Return the user data as is
+        let users = readUsersFromJson();
+        users[id] = {...users[id],...userData}
+        return users[id];
     }
 };

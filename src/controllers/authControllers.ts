@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { saveUser, findAllUsers,isUsingMongoDB,findUserByUsername,findUserById } from '../services/userServices';
+import { saveUser, findAllUsers,isUsingMongoDB,findUserByUsername,findUserById, saveUserandUpdate } from '../services/userServices';
 import { IUser } from '../interfaces/userInterfaces';
 import { genTokenandSetCookie } from '../utils/helpers/genTokenandSetCookie';
 import bcrypt from 'bcryptjs';
@@ -45,7 +45,7 @@ export const signupUser = async (req: Request, res: Response): Promise<Response 
             createdAt: new Date()
         }
         // Save the user using the service
-        const savedUser = await saveUser(newUser);
+        const savedUser = await saveUserandUpdate(id,newUser);
         return res.status(201).json({message:"Signup Successful",savedUser});
     }
     
