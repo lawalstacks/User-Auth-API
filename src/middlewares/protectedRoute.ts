@@ -16,24 +16,23 @@ export const protectedRoute = async (req: CustomRequest, res: Response, next: Ne
             return res.status(401).json({ error: "Unauthorized" });
         }
 
-        // Verify the JWT token and get userId or email
+        // Verify the JWT token and get userId or email (i.e any payload)
         const decoded = jwt.verify(token, process.env.JWT_SECRET || '') as JwtPayload;
 
         let user;
-
         const useMongoDb = process.env.MONGO_URL === 'true'; // Use MongoDB if the flag is true
 
         if (useMongoDb) {
-            // MongoDB case: Find user by userId(payload)
+            // MongoDB case: Find user by any (payload)
             user = await User.findById(decoded.payload).select('-password');
         } else {
-            // JSON case: Find user by email (since JSON doesn't hav e an id)
+            // JSON case: Find user by any payload
             const fileContent = fs.readFileSync(userJsonPath, 'utf-8');
             const users = JSON.parse(fileContent);
             console.log(users)
             console.log(decoded.payload)
 
-            // Find user by any option(payload "optional") in the JSON file
+            // Find user by any option(payload) in the JSON file
             user = users.find((u: any) => 
                 u.email === decoded.payload || 
                 u.id === decoded.payload || 
