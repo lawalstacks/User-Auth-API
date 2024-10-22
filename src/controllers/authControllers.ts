@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { saveUser, findAllUsers,findUserByEmail } from '../services/userServices';
 import { IUser } from '../interfaces/userInterfaces';
+import { genTokenandSetCookie } from '../utils/helpers/genTokenandSetCookie';
 import bcrypt from 'bcryptjs';
 
 // Signup user controller
@@ -17,6 +18,8 @@ export const signupUser = async (req: Request, res: Response): Promise<Response 
         // Hash the password before saving
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        //Generate token and set cookies
+        genTokenandSetCookie(email,res)
         const newUser: IUser = {
             name,
             email,
@@ -59,7 +62,8 @@ export const loginUser = async (req: Request, res: Response) : Promise<Response 
             return res.status(400).json({ error: 'Invalid email or password' });
         }
 
-       
+       //Generate token and set cookies
+       genTokenandSetCookie(email,res)
         return res.status(200).json({ message: 'Login successful'});
     } catch (error) {
         return res.status(500).json({ error: 'Internal Server Error' });
