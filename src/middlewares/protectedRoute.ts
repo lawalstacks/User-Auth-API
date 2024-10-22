@@ -13,7 +13,7 @@ export const protectedRoute = async (req: CustomRequest, res: Response, next: Ne
         const token = req.cookies?.jwt;
 
         if (!token) {
-            return res.status(400).json({ error: "Unauthorized" });
+            return res.status(401).json({ error: "Unauthorized" });
         }
 
         // Verify the JWT token and get userId or email
@@ -24,15 +24,22 @@ export const protectedRoute = async (req: CustomRequest, res: Response, next: Ne
         const useMongoDb = process.env.MONGO_URL === 'true'; // Use MongoDB if the flag is true
 
         if (useMongoDb) {
-            // MongoDB case: Find user by userId
-            user = await User.findById(decoded.userId).select('-password');
+            // MongoDB case: Find user by userId(payload)
+            user = await User.findById(decoded.payload).select('-password');
         } else {
-            // JSON case: Find user by email (since JSON doesn't have an id)
+            // JSON case: Find user by email (since JSON doesn't hav e an id)
             const fileContent = fs.readFileSync(userJsonPath, 'utf-8');
             const users = JSON.parse(fileContent);
+            console.log(users)
+            console.log(decoded.payload)
 
-            // Find user by email in the JSON file
-            user = users.find((u: any) => u.email === decoded.email);
+            // Find user by any option(payload "optional") in the JSON file
+            user = users.find((u: any) => 
+                u.email === decoded.payload || 
+                u.id === decoded.payload || 
+                u.username === decoded.payload
+            );
+            console.log(user)
         }
 
         // If user is not found in either MongoDB or JSON

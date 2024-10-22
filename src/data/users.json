@@ -1,1 +1,23 @@
-[]
+[
+  {
+    "id": "d42bb464-225c-4137-99a6-64bc054d1bd8",
+    "username": "lawallex",
+    "email": "kquazeemastisx4f@gmail.com",
+    "password": "$2a$10$ATThzXBTaX/mpa.31PJdMewv1ZCNQ/G1YCq8M4rWo3hRMx4ASFtq6",
+    "createdAt": "2024-10-22T21:09:23.643Z"
+  },
+  {
+    "id": "d42bb464-225c-4137-99a6-64bc054d1bd8",
+    "username": "lawaly",
+    "email": "kquazeemastisx4f@gmail.com",
+    "password": "$2a$10$2oIPM9uRvpEVn0Hosqj2hu23TPfay2lrlia6OTObdsKAZtMa1DWuG",
+    "createdAt": "2024-10-22T21:09:23.643Z"
+  },
+  {
+    "id": "d42bb464-225c-4137-99a6-64bc054d1bd8",
+    "username": "lawaly",
+    "email": "Quazeemastisx4f@gmail.com",
+    "password": "$2a$10$ATThzXBTaX/mpa.31PJdMewv1ZCNQ/G1YCq8M4rWo3hRMx4ASFtq6",
+    "createdAt": "2024-10-22T21:09:23.643Z"
+  }
+]
