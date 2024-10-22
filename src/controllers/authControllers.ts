@@ -35,16 +35,6 @@ export const signupUser = async (req: Request, res: Response): Promise<Response 
     }
 };
 
-// Get all users controller (optional)
-export const getAllUsers = async (req: Request, res: Response) : Promise<Response | any> => {
-    try {
-        const users = await findAllUsers();
-        return res.status(200).json(users);
-    } catch (error) {
-        return res.status(500).json({ error: 'Internal Server Error' });
-    }
-};
-
 // Login user controller
 export const loginUser = async (req: Request, res: Response) : Promise<Response | any> =>{
     try {
@@ -69,3 +59,31 @@ export const loginUser = async (req: Request, res: Response) : Promise<Response 
         return res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
+// Function to logout
+// Login user controller
+export const logoutUser = async (_req: Request, res: Response) : Promise<Response | any> =>{
+    try {
+    res.cookie('jwt', '', {
+        httpOnly: true,
+        expires: new Date(0), // expiration date to delete the cookie
+        sameSite: 'strict',
+    });
+
+    res.status(200).json({ message: 'Logout successful' });
+        
+    } catch (error) {
+        return res.status(500).json({ error: 'Internal Server Error' });
+   };
+}
+
+// Get all users controller (optional)
+export const getAllUsers = async (_req: Request, res: Response) : Promise<Response | any> => {
+    try {
+        const users = await findAllUsers();
+        return res.status(200).json(users);
+    } catch (error) {
+        return res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+

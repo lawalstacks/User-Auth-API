@@ -1,6 +1,5 @@
 import User from '../models/userModel';
 import { IUser } from '../interfaces/userInterfaces'; // Import the IUser interface
-import mongoose from 'mongoose';
 import { readUsersFromJson, writeUsersToJson } from '../utils/helpers/fileHelpers';
 
 // Function to save a user
@@ -31,6 +30,7 @@ export const findAllUsers = async (): Promise<IUser[]> => {
     }
 };
 
+//Find user by email
 export const findUserByEmail = async (email: string): Promise<IUser | null> => {
     if (process.env.USE_MONGODB === 'true') {
         // If using MongoDB, find the user in the database

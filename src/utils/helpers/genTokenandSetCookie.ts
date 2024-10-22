@@ -7,6 +7,7 @@ interface TokenPayload {
     email?: string;
 }
 
+//Function to generate token and set cookie
 export const genTokenandSetCookie = (payload: TokenPayload, res: Response): string => {
 
     // Generate JWT token with the payload (either userId or email or both)

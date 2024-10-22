@@ -1,5 +1,5 @@
 import express from 'express';
-import { signupUser, loginUser, getAllUsers } from '../controllers/authControllers';
+import { signupUser, loginUser,logoutUser, getAllUsers } from '../controllers/authControllers';
 import {protectedRoute} from '../middlewares/protectedRoute';
 
 
@@ -10,6 +10,9 @@ router.post('/signup', signupUser);
 
 // Login a user
 router.post('/login', loginUser);
+
+//Logout a user
+router.post('/logout', logoutUser);
 
 //get all registered user details
 router.post('/userprofiles',protectedRoute, getAllUsers);

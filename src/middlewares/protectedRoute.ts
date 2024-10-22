@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import User from '../models/userModel'; // MongoDB model
 import fs from 'fs';
@@ -21,7 +21,7 @@ export const protectedRoute = async (req: CustomRequest, res: Response, next: Ne
 
         let user;
 
-        const useMongoDb = process.env.USE_MONGODB === 'true'; // Use MongoDB if the flag is true
+        const useMongoDb = process.env.MONGO_URL === 'true'; // Use MongoDB if the flag is true
 
         if (useMongoDb) {
             // MongoDB case: Find user by userId
