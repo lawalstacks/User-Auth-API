@@ -52,11 +52,13 @@ The Auth API’s service layer provides several key functionalities:
    ```bash
    git clone https://github.com/lawalstacks/user-auth-api.git
    cd user-auth-api
+```
 
 2. Install dependencies:
 
 ```bash
  npm install
+```
 
 
 3. Create a .env file in the root directory and define the following environment variables:
