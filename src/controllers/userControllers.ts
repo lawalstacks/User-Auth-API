@@ -115,6 +115,8 @@ export const getAllUsers = async (_req: Request, res: Response) : Promise<Respon
     }
 };
 
+
+//Edit Profile
 export const editProfile = async(req:Request,res: Response):
  Promise<Response | any> =>{
     let {username, email, password} = req.body;
