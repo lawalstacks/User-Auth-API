@@ -1,5 +1,5 @@
 import express from 'express';
-import { signupUser, loginUser,logoutUser, getAllUsers, editProfile } from '../controllers/authControllers';
+import { signupUser, loginUser,logoutUser, getAllUsers, editProfile } from '../controllers/userControllers';
 import {protectedRoute} from '../middlewares/protectedRoute';
 
 

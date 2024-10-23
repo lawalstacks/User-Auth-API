@@ -45,17 +45,18 @@ export const signupUser = async (req: Request, res: Response): Promise<Response 
             createdAt: new Date()
         }
         // Save the user using the service
-        const savedUser = await saveUserandUpdate(id,newUser);
+        const savedUser = await saveUser(newUser);
         return res.status(201).json({message:"Signup Successful",savedUser});
     }
     
- } catch (error) {
+
+        
+    } catch (error) {
         console.log(error)
         return res.status(500).json({ error: 'Internal Server Error' });
     }
 };
 
-a
 // Login user controller
 export const loginUser = async (req: Request, res: Response) : Promise<Response | any> =>{
     try {
@@ -81,8 +82,8 @@ export const loginUser = async (req: Request, res: Response) : Promise<Response 
     }
 };
 
-
-// Logout user controller
+// Function to logout
+// Login user controller
 export const logoutUser = async (_req: Request, res: Response) : Promise<Response | any> =>{
     try {
     res.cookie('jwt', '', {
@@ -98,10 +99,10 @@ export const logoutUser = async (_req: Request, res: Response) : Promise<Respons
    };
 }
 
-
-// Get all users controller
+// Get all users controller (optional)
 export const getAllUsers = async (_req: Request, res: Response) : Promise<Response | any> => {
     try {
+        console.log("working")
         const users = await findAllUsers();
         return res.status(200).json(users);
     } catch (error) {
@@ -109,8 +110,6 @@ export const getAllUsers = async (_req: Request, res: Response) : Promise<Respon
     }
 };
 
-
-//Edit Profile Controller
 export const editProfile = async(req:Request,res: Response):
  Promise<Response | any> =>{
     let {username, email, password} = req.body;
@@ -128,8 +127,8 @@ export const editProfile = async(req:Request,res: Response):
             const hashedPassword = await bcrypt.hash(password, salt);
             userToUpdate.password = hashedPassword;
         }
-        const userUpdatedProfile= await saveUserandUpdate(userToUpdate)
-        res.status(201).json({userUpdateProfile,message:"profile updated!"})
+        userToUpdate = await saveUserandUpdate(userId,userToUpdate);
+        res.status(201).json({userToUpdate,message:"profile updated!"})
     }catch{
         return res.status(500).json({ error: 'Internal Server Error' });
     }
