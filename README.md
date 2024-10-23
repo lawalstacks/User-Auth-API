@@ -50,3 +50,123 @@ The Auth API’s service layer provides several key functionalities:
    ```bash
    git clone https://github.com/yourusername/auth-api.git
    cd auth-api
+
+2. Install dependencies:
+
+npm install
+
+
+3. Create a .env file in the root directory and define the following environment variables:
+
+MONGO_URL=mongodb://<username>:<password>@localhost:27017/yourdbname
+JWT_SECRET=your_jwt_secret
+
+
+4. Run the server:
+
+npm run start
+
+
+
+API Endpoints
+
+User Registration
+
+POST /signup
+
+Request Body:
+
+{
+  "username": "string",
+  "email": "string",
+  "password": "string"
+}
+
+Response:
+
+201 Created: User created successfully.
+
+400 Bad Request: Validation errors or user already exists.
+
+
+
+
+User Login
+
+POST /login
+
+Request Body:
+
+{
+  "username": "string",
+  "password": "string"
+}
+
+Response:
+
+200 OK: User logged in successfully with JWT token.
+
+401 Unauthorized: Invalid credentials.
+
+
+
+
+User Profile Update
+
+PATCH /update-profile
+
+Request Body:
+
+{
+  "username": "string",
+  "email": "string",
+  "password": "string" (optional)
+}
+
+Response:
+
+200 OK: User profile updated successfully.
+
+404 Not Found: User not found.
+
+
+
+
+User Logout
+
+POST /logout
+
+Response:
+
+200 OK: User logged out successfully.
+
+
+
+
+Middleware
+
+Protected Route
+
+The protectedRoute middleware ensures that only authenticated users can access certain endpoints. It verifies the JWT token sent in the cookies and fetches the user data.
+
+Contributing
+
+Contributions are welcome! If you'd like to contribute to this project, please fork the repository and submit a pull request with your changes.
+
+License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+Major Modules
+
+Express - Web framework for Node.js
+
+jsonwebtoken - For handling JWTs
+
+bcrypt - For password hashing
+
+TypeScript - For enhancing JavaScript with static types
+
+
+### Notes for Customization
+- **Update the GitHub link** to your actual repository.
