@@ -4,9 +4,9 @@ import { IUser } from '../interfaces/userInterfaces';
 import { genTokenandSetCookie } from '../utils/helpers/genTokenandSetCookie';
 import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
-
-
 let id;
+
+
 // Signup user controller
 export const signupUser = async (req: Request, res: Response): Promise<Response | any> => {
     
@@ -61,6 +61,8 @@ export const signupUser = async (req: Request, res: Response): Promise<Response 
     }
 };
 
+
+
 // Login user controller
 export const loginUser = async (req: Request, res: Response) : Promise<Response | any> =>{
     try {
@@ -87,8 +89,9 @@ export const loginUser = async (req: Request, res: Response) : Promise<Response 
     }
 };
 
-// Function to logout
-// Login user controller
+
+
+// Logout user controller
 export const logoutUser = async (_req: Request, res: Response) : Promise<Response | any> =>{
     try {
     res.cookie('jwt', '', {
@@ -114,6 +117,7 @@ export const getAllUsers = async (_req: Request, res: Response) : Promise<Respon
         return res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
 
 
 //Edit Profile
