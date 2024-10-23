@@ -52,7 +52,7 @@ The Auth API’s service layer provides several key functionalities:
    ```bash
    git clone https://github.com/lawalstacks/user-auth-api.git
    cd user-auth-api
-```
+
 
 2. Install dependencies:
 
