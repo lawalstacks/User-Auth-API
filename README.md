@@ -1,5 +1,5 @@
 
-# Auth API
+# User-Auth-API
 
 ## Overview
 
@@ -23,7 +23,7 @@ The Auth API is a robust authentication solution designed to handle user registr
 
 - **Service Layer**: The API includes a service layer that functions similarly to an Object-Relational Mapping (ORM) system, allowing for abstraction in database operations. This makes it easier to manage data interactions regardless of whether MongoDB or JSON is used as the storage solution.
 
-## Services Features
+## Services,Middlewares,Helpers Features
 
 The Auth API’s service layer provides several key functionalities:
 
@@ -51,8 +51,8 @@ The Auth API’s service layer provides several key functionalities:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/auth-api.git
-   cd auth-api
+   git clone https://github.com/lawalstacks/user-auth-api.git
+   cd user-auth-api
    ```
 
 2. Install dependencies:
@@ -64,6 +64,7 @@ The Auth API’s service layer provides several key functionalities:
 3. Create a `.env` file in the root directory and define the following environment variables:
 
    ```plaintext
+   PORT=preferred_port
    MONGO_URL=mongodb://<username>:<password>@localhost:27017/yourdbname
    JWT_SECRET=your_jwt_secret
    ```
@@ -71,7 +72,7 @@ The Auth API’s service layer provides several key functionalities:
 4. Run the server:
 
    ```bash
-   npm run start
+   npm run dev
    ```
 
 ## API Endpoints
@@ -100,7 +101,7 @@ The Auth API’s service layer provides several key functionalities:
   - Request Body:
     ```json
     {
-      "email": "string",
+      "username": "string",
       "password": "string"
     }
     ```
@@ -118,7 +119,7 @@ The Auth API’s service layer provides several key functionalities:
     {
       "username": "string",
       "email": "string",
-      "password": "string" (optional)
+      "password": "string"
     }
     ```
 
@@ -147,7 +148,7 @@ Contributions are welcome! If you'd like to contribute to this project, please f
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Acknowledgments
+## Major Dev Dependencies 
 
 - [Express](https://expressjs.com/) - Web framework for Node.js
 - [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken) - For handling JWTs
