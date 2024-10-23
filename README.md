@@ -1,5 +1,3 @@
-#User-Auth-API
-
 ## Overview
 
 The User-Auth-API is a robust authentication solution designed to handle user registration, login, and secure access to protected routes. This API supports both MongoDB and JSON file storage, allowing for flexible deployment options. Built with TypeScript and Express, it offers a modern approach to user authentication with easy-to-use endpoints and comprehensive features.
