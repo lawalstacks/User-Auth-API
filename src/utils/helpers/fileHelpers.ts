@@ -15,5 +15,8 @@ export const readUsersFromJson = (): IUser[] => {
 
 // Function to write users to JSON file
 export const writeUsersToJson = (users: IUser[]): void => {
+    if (!fs.existsSync(jsonFilePath)) {
+        fs.writeFileSync(jsonFilePath, JSON.stringify([]), 'utf-8');
+    }
     fs.writeFileSync(jsonFilePath, JSON.stringify(users, null, 2), 'utf-8');
 };

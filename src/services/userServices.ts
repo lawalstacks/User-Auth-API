@@ -84,7 +84,6 @@ export const findUserById = async (id:any): Promise<IUser | null> => {
             console.log(users)
             // Find user in the JSON file by ID
             const user = users.find(u => u.id === id);
-            console.log(user)
             return user || null;
         } catch (error) {
             console.error(`Error finding user by ID in JSON file: ${error}`);
@@ -93,7 +92,7 @@ export const findUserById = async (id:any): Promise<IUser | null> => {
     }
 };
 
-export const saveUserandUpdate = async (id: any, userData: any): Promise<any> => {
+export const saveUserandUpdate = async (id: any, userData: any): Promise<IUser  | null> => {
     if (isUsingMongoDB()) {
     
         // If using MongoDB, save  and update using the User model
@@ -101,8 +100,21 @@ export const saveUserandUpdate = async (id: any, userData: any): Promise<any> =>
         return updatedUser;
     } else {
         // If not using MongoDB, save to JSON file
-        let users = readUsersFromJson();
-        users[id] = {...users[id],...userData}
-        return users[id];
+
+        const users:IUser[] = readUsersFromJson();
+        const userIndex = users.findIndex((u: any) => u.id === id);
+        // If user exists, update their data
+        if (userIndex !== -1) {
+        // Merge the old data with the new data
+        users[userIndex] = { ...users[userIndex], ...userData };
+
+        // Write the updated array back to the JSON file
+        writeUsersToJson(users);
+        // Return the updated user
+        return users[userIndex];
+    }
+
+    // If the user is not found, return null
+    return null;
     }
 };

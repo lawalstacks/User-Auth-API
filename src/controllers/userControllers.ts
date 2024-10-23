@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { saveUser, findAllUsers,isUsingMongoDB,findUserByUsername,findUserById, saveUserandUpdate } from '../services/userServices';
+import { saveUser, findAllUsers,isUsingMongoDB,findUserByUsername,findUserById, saveUserandUpdate, findUserByEmail } from '../services/userServices';
 import { IUser } from '../interfaces/userInterfaces';
 import { genTokenandSetCookie } from '../utils/helpers/genTokenandSetCookie';
 import bcrypt from 'bcryptjs';
@@ -13,12 +13,16 @@ export const signupUser = async (req: Request, res: Response): Promise<Response 
     try {
         const { username, email, password } = req.body;
         // Check if the user already exists
+        if(!email || !username){
+            return res.status(400).json({error:"username and email is required"})
+        }
         const existingUser = await findUserByUsername(username);
-        if (existingUser) {
+        const existingEmail = await findUserByEmail(email);
+        if (existingUser || existingEmail) {
             return res.status(400).json({ error: 'User already exists' });
         }
         //handle password
-        if(password.length < 6){
+        if(!password || password.length < 6){
             return res.status(400).json({ error: 'password should be up to 6 characters' })
         }
         // Hash the password before saving
@@ -64,10 +68,10 @@ export const loginUser = async (req: Request, res: Response) : Promise<Response 
 
         // Check if the user exists
         const user = await findUserByUsername(username);
+        console.log(user)
         if (!user) {
             return res.status(400).json({ error: 'No user found with the details' });
         }
-
         // Compare the provided password with the stored hashed password
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
@@ -78,6 +82,7 @@ export const loginUser = async (req: Request, res: Response) : Promise<Response 
        genTokenandSetCookie(username,res)
         return res.status(200).json({ message: 'Login successful',user});
     } catch (error) {
+        console.log(error)
         return res.status(500).json({ error: 'Internal Server Error' });
     }
 };
@@ -113,22 +118,26 @@ export const getAllUsers = async (_req: Request, res: Response) : Promise<Respon
 export const editProfile = async(req:Request,res: Response):
  Promise<Response | any> =>{
     let {username, email, password} = req.body;
-    const userId = req.params.id;
+    const id = req.params.id;
     try{
-        let userToUpdate = await findUserById(userId);
-        console.log(userToUpdate);
-        
-        if(!userToUpdate){ return res.status(200).json({message: "you cannot edit other peoples profile"})}
-        
-        userToUpdate.username = username || username,
-        userToUpdate.email=email || email
+        let userToUpdate = await findUserById(id);
+        const userEmailExist = await findUserByEmail(email);
+        const userUsernameExist = await findUserByUsername(username);
+        if(userEmailExist || userUsernameExist){
+            return res.status(400).json({error: "detail already exist, add a new detail or cancel"})
+        }
+        if(!userToUpdate){ return res.status(200).json({message: "No user"})}
+        if(userToUpdate?.id != id){ return res.status(200).json({message: "you cannot edit other peoples profile"})}
+        userToUpdate.username = username || userToUpdate.username,
+        userToUpdate.email = email || userToUpdate.email
         if (password) {
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(password, salt);
-            userToUpdate.password = hashedPassword;
+            userToUpdate.password = hashedPassword || userToUpdate.password;
         }
-        userToUpdate = await saveUserandUpdate(userId,userToUpdate);
-        res.status(201).json({userToUpdate,message:"profile updated!"})
+        userToUpdate = await saveUserandUpdate(id,userToUpdate);
+        genTokenandSetCookie(username,res)
+        res.status(201).json({message:"profile updated!",userToUpdate})
     }catch{
         return res.status(500).json({ error: 'Internal Server Error' });
     }

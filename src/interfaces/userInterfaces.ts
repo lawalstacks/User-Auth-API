@@ -1,7 +1,7 @@
 
 // Interface for User
 export interface IUser  {
-    id?:any;
+    id?:string;
     username: string;
     email: string;
     password: string;
