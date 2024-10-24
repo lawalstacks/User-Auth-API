@@ -75,7 +75,7 @@ export const loginUser = async (req: Request, res: Response) : Promise<Response 
             return res.status(400).json({ error: 'No user found with the details' });
         }
         // Compare the provided password with the stored hashed password
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = await bcrypt.compare(password, user?.password);
         if (!isPasswordValid) {
             return res.status(400).json({ error: 'Invalid email or password' });
         }
@@ -143,22 +143,27 @@ export const editProfile = async(req:CustomRequest,res: Response):
         //if user id doest not exist
         if(!userToUpdate){ return res.status(400).json({error: "No user found"})}
 
-        //save the updated name or remain the same and ensure uniqueness
-        if(userUsernameExist){
-            return res.status(400).json({error: "username already exist, add a new detail or cancel"})
+        //saving the updated username or remain the same and ensure uniqueness
+        if (username && username !== userToUpdate.username) {
+            if (userUsernameExist) {
+                return res.status(400).json({ error: "Username already exists, please choose a different one" });
+            }
+            userToUpdate.username = username; // Update to new username if valid
         }
-        userToUpdate.username = username || userToUpdate.username;
 
-        if(userEmailExist){
-            return res.status(400).json({error: "email already exist, add a new detail or cancel"})
+        if (email && email !== userToUpdate.email) {
+            if (userEmailExist) {
+                return res.status(400).json({ error: "Email already exists, please choose a different one" });
+            }
+            userToUpdate.email = email; // Update to new email if valid
         }
-        userToUpdate.email = email || userToUpdate.email
 
         if (password) {
+            
             if(password.length < 6){return res.status(400).json({error:"password must be up to 6 characters"})}
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(password, salt);
-            userToUpdate.password = hashedPassword || userToUpdate.password;
+            userToUpdate.password = hashedPassword || userToUpdate?.password;
         }
 
         //if using momgodb
