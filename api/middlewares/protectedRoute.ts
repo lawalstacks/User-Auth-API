@@ -6,7 +6,7 @@ import { readUsersFromJson } from '../utils/helpers/fileHelpers';
 import { IUser } from '../interfaces/userInterfaces';
 import { isUsingMongoDB} from '../services/userServices';
 
-// Path to the JSON file
+
 
 export const protectedRoute = async (req: CustomRequest, res: Response, next: NextFunction): Promise<any> => {
     try {
