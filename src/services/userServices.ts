@@ -3,7 +3,7 @@ import { IUser } from '../interfaces/userInterfaces'; // Import the IUser interf
 import { readUsersFromJson, writeUsersToJson } from '../utils/helpers/fileHelpers';
 import mongoose from 'mongoose';
 
-//Database may fuck up thats why using user.json optionally
+//Database may not be available thats why using user.json optionally
 export const isUsingMongoDB = (): boolean => {
     const mongoUrl = process.env.MONGO_URL;
     
