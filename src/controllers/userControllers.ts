@@ -42,7 +42,7 @@ export const signupUser = async (req: Request, res: Response): Promise<Response 
         return res.status(201).json({message:"Signup Successful",savedUser});
     }else{
         const newUser: IUser = {
-            _id:uuidv4(),
+            _jid:uuidv4(),
             username,
             email,
             password: hashedPassword, // Store the hashed password
@@ -131,12 +131,12 @@ export const editProfile = async(req:CustomRequest,res: Response):
         const userEmailExist = await findUserByEmail(email);
         const userUsernameExist = await findUserByUsername(username);
 
-         // Access the user ID set by the protectedRoute middleware and compare with the params.id of the editing user
-        if( req.user?.id!== id){ return res.status(400).json({error: "you cannot edit other peoples profile"})}
+         // Access the user jsonId or ID set by the protectedRoute middleware and compare with the params.id of the editing user
+        if( req.user?._id.toString() !== id){ return res.status(400).json({error: "you cannot edit other peoples profile"})}
         
         //if user id doest not exist
         if(!userToUpdate){ return res.status(400).json({error: "No user found"})}  
-        if(userEmailExist || userUsernameExist){
+        if(userEmailExist === email || userUsernameExist === username){
             return res.status(400).json({error: "detail already exist, add a new detail or cancel"})
         }
         userToUpdate.username = username || userToUpdate.username,
@@ -147,7 +147,7 @@ export const editProfile = async(req:CustomRequest,res: Response):
             const hashedPassword = await bcrypt.hash(password, salt);
             userToUpdate.password = hashedPassword || userToUpdate.password;
         }
-        userToUpdate = await saveUserandUpdate(id,userToUpdate);
+        userToUpdate = await saveUserandUpdate(req.user.id,userToUpdate);
         genTokenandSetCookie(username,res)
         res.status(201).json({message:"profile updated!",userToUpdate})
     }catch{

@@ -15,7 +15,7 @@ router.post('/auth/login', loginUser);
 router.post('/auth/logout',logoutUser);
 
 //see all registered users, only registered user can perform this action
-router.get('/allprofiles',protectedRoute, getAllUsers);
+router.get('/all-profiles',protectedRoute, getAllUsers);
 
 //edit profile, only current user can edit profile
 router.patch('/profile/edit/:id',protectedRoute,editProfile)

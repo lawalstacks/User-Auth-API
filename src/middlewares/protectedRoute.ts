@@ -11,18 +11,21 @@ import { isUsingMongoDB} from '../services/userServices';
 export const protectedRoute = async (req: CustomRequest, res: Response, next: NextFunction): Promise<any> => {
     try {
         const token = req.cookies?.jwt;
-
         if (!token) {
             return res.status(401).json({ error: "Unauthorized" });
-        }
-
+        }        
         let decoded = jwt.verify(token, process.env.JWT_SECRET || '') as JwtPayload;
-
      // Use MongoDB if the flag is true
          let user;
         if (isUsingMongoDB()) {
             // MongoDB case: Find user by any (payload)
-        user = await User.findById(decoded.payload).select('-password');
+            user = await User.findOne({
+                $or: [
+                    { email: decoded.payload },
+                    { username: decoded.payload }
+                ]
+            }).select('-password');
+            console.log(user)
         } else {
             // JSON case: Find user by any payload
             const users:IUser[] = readUsersFromJson();
@@ -32,12 +35,11 @@ export const protectedRoute = async (req: CustomRequest, res: Response, next: Ne
             // Find user by any option(payload) in the JSON file
             user = users.find((u: any) => 
                 u.email === decoded.payload || 
-                u._id === decoded.payload ||
+                u._jid === decoded.payload ||
                 u.username === decoded.payload
             );
 
         }
-        
         // If user is not found in either MongoDB or JSON
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
@@ -45,16 +47,15 @@ export const protectedRoute = async (req: CustomRequest, res: Response, next: Ne
 
         // Attach user to the request object
         req.user = user;
+        console.log(req.user._id.toString())
         next();
     } catch (error: any) {
         if (error.code === 'ERR_HTTP_HEADERS_SENT') {
             return;
         } else {
+            console.log(error)
             res.status(500).json({ error: 'Internal Server Error' });
         }
     }
 };
-function isUsingMongoDb() {
-    throw new Error('Function not implemented.');
-}
 

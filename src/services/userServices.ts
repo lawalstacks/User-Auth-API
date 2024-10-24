@@ -2,17 +2,22 @@ import User from '../models/userModel';
 import { IUser } from '../interfaces/userInterfaces'; // Import the IUser interface
 import { readUsersFromJson, writeUsersToJson } from '../utils/helpers/fileHelpers';
 import mongoose from 'mongoose';
+import connectDb from '../db/connectDb';
 
-//Database may fuck up thats why using user.json optionally
+//Database may not be avialbe thats why dual user.json optionally
 export const isUsingMongoDB = (): boolean => {
-    return !!process.env.MONGO_URL;
+    if(!!connectDb()){
+        return true
+    }else{
+        return false
+    }
 };
 
 
 // Function to save a user
 export const saveUser = async (userData: IUser): Promise<IUser> => {
     if (isUsingMongoDB()) {
-    
+    console.log(isUsingMongoDB())
         // If using MongoDB, save using the User model
         const newUser = new User(userData);
         await newUser.save();
@@ -30,7 +35,7 @@ export const saveUser = async (userData: IUser): Promise<IUser> => {
 export const findAllUsers = async (): Promise<IUser[]> => {
     if (isUsingMongoDB()) {
         // If using MongoDB, retrieve users from the database
-        return await User.find().select('-password').exec();
+        return await User.find().select('-password');
     } else {
         // If not using MongoDB, read from JSON file
         return readUsersFromJson();
@@ -53,7 +58,7 @@ export const findUserByEmail = async (email: string): Promise<IUser | null> => {
 export const findUserByUsername = async (username: string): Promise<IUser | null> => {
     if (isUsingMongoDB()) {
         // If using MongoDB, find the user in the database
-        return await User.findOne({ username }).select('-password').exec();
+        return await User.findOne({ username });
     } else {
         // If using JSON, find the user in the JSON file
         const users = readUsersFromJson();
@@ -70,7 +75,7 @@ export const findUserById = async (id:any): Promise<IUser | null> => {
                 throw new Error('Invalid user ID');
             }
 
-            const user = await User.findById(id).select('-password');
+            const user = await User.findById(id);
             return user;
         } catch (error) {
             console.error(`Error finding user by ID in MongoDB: ${error}`);
@@ -83,7 +88,7 @@ export const findUserById = async (id:any): Promise<IUser | null> => {
             const users: IUser[] = readUsersFromJson();
             console.log(users)
             // Find user in the JSON file by ID
-            const user = users.find(u => u._id === id);
+            const user = users.find(u => u._jid === id);
             return user || null;
         } catch (error) {
             console.error(`Error finding user by ID in JSON file: ${error}`);
@@ -91,6 +96,7 @@ export const findUserById = async (id:any): Promise<IUser | null> => {
         } 
     }
 };
+
 
 export const saveUserandUpdate = async (id: any, userData: any): Promise<IUser  | null> => {
     if (isUsingMongoDB()) {
@@ -102,7 +108,7 @@ export const saveUserandUpdate = async (id: any, userData: any): Promise<IUser  
         // If not using MongoDB, save to JSON file
 
         const users:IUser[] = readUsersFromJson();
-        const userIndex = users.findIndex((u: any) => u._id === id);
+        const userIndex = users.findIndex((u: any) => u._jid === id);
         // If user exists, update their data
         if (userIndex !== -1) {
         // Merge the old data with the new data

@@ -3,6 +3,7 @@ dotenv.config();
 import express from 'express';
 import userRoutes from './routes/userRoutes';
 import cookieParser from 'cookie-parser';
+import connectDb from './db/connectDb';
 
 
 
@@ -17,7 +18,7 @@ app.use(cookieParser());
 app.use('/api', userRoutes);
 
 
-
+connectDb();
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });

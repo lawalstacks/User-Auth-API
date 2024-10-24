@@ -1,17 +1,19 @@
 import mongoose from 'mongoose';
 
-const connectDb = async (): Promise<void> => {
+const connectDb = async (): Promise<void | boolean> => {
     try {
         
         mongoose.set('strictQuery', false);
 
         // Connect to the MongoDB database using the URL from environment variables
-        const conn = await mongoose.connect(process.env.MONGO_URL || '');
+        const conn = await mongoose.connect(process.env.MONGO_URL || "");
 
-        console.log(`Database connected at ${conn.connection.host}`);
+        if(conn){console.log(`Database connected at ${conn.connection.host}`);
+        return true;
+        }
     } catch (e) {
-        console.error('Unable to connect to the database:', e);
-        process.exit(1); // Optionally exit the process with a failure code
+        console.log('Unable to connect to the database');
+        return false;
     }
 };
 
