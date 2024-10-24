@@ -125,15 +125,19 @@ export const editProfile = async(req:CustomRequest,res: Response):
  Promise<Response | any> =>{
     let {username, email, password} = req.body;
     const id = req.params.id;
+
+    // Access the user jsonId or ID set by the protectedRoute middleware and compare with the params.id of the editing user
+
+        if( req.user?._id.toString() !== id){ 
+{
+   return res.status(400).json({error: "you cannot edit other peoples profile"})
+}
     console.log(id)
+
     try{
         let userToUpdate = await findUserById(id);
         const userEmailExist = await findUserByEmail(email);
-        const userUsernameExist = await findUserByUsername(username);
-
-         // Access the user jsonId or ID set by the protectedRoute middleware and compare with the params.id of the editing user
-        if( req.user?._id.toString() !== id){ return res.status(400).json({error: "you cannot edit other peoples profile"})}
-        
+        const userUsernameExist = await findUserByUsername(username);      
         //if user id doest not exist
         if(!userToUpdate){ return res.status(400).json({error: "No user found"})}  
         if(userEmailExist === email || userUsernameExist === username){
