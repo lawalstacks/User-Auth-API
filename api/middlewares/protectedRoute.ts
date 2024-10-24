@@ -16,7 +16,6 @@ export const protectedRoute = async (req: CustomRequest, res: Response, next: Ne
         }        
         let decoded = jwt.verify(token, process.env.JWT_SECRET || '') as JwtPayload;
      // Use MongoDB if the flag is true
-     console.log(typeof(decoded.payload))
          let user;
         if (isUsingMongoDB()) {
             // MongoDB case: Find user by any (payload)
@@ -26,7 +25,6 @@ export const protectedRoute = async (req: CustomRequest, res: Response, next: Ne
                     { username: decoded.payload }
                 ]
             }).select('-password');
-            console.log(user);
         } else {
             // JSON case: Find user by any payload
             const users:IUser[] = readUsersFromJson();
@@ -53,8 +51,7 @@ export const protectedRoute = async (req: CustomRequest, res: Response, next: Ne
         if (error.code === 'ERR_HTTP_HEADERS_SENT') {
             return;
         } else {
-            console.log(error)
-            res.status(500).json({ error: 'Internal Server Error' });
+            res.status(500).json({ error: 'Internal Server Error here' });
         }
     }
 };

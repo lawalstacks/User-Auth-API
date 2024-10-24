@@ -102,6 +102,7 @@ export const findUserById = async (id:any): Promise<IUser | null> => {
 };
 
 export const saveUserandUpdate = async (id: any, userData: any): Promise<IUser  | null> => {
+    console.log("Updating user in MongoDB...");
     if (isUsingMongoDB()) {
     
         // If using MongoDB, save  and update using the User model

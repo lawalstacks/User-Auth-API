@@ -7,6 +7,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { CustomRequest } from '../interfaces/requestInterfaces';
 
 
+
+
 // Signup user controller
 export const signupUser = async (req: Request, res: Response): Promise<Response | any> => {
     
@@ -65,9 +67,11 @@ export const signupUser = async (req: Request, res: Response): Promise<Response 
 
 // Login user controller
 export const loginUser = async (req: Request, res: Response) : Promise<Response | any> =>{
+    console.log("working")
     try {
         const { username, password } = req.body;
-
+        console.log("working")
+        console.log(username)
         // Check if the user exists
         const user = await findUserByUsername(username);
         console.log(user)
@@ -126,7 +130,7 @@ export const editProfile = async(req:CustomRequest,res: Response):
  Promise<Response | any> =>{
     let {username, email, password} = req.body;
     const id = req.params.id;
-    console.log(id)
+
     try{
         let userToUpdate = await findUserById(id);
         const userEmailExist = await findUserByEmail(email);
@@ -134,10 +138,13 @@ export const editProfile = async(req:CustomRequest,res: Response):
 
          // Access the user id or _jid json generated ui set by the protectedRoute middleware and compare with the params.id of the editing user
          if(isUsingMongoDB()){
-            if( req.user?._id.toString() !== id){ return res.status(400).json({error: "you cannot edit other peoples profile"})}
-         }
-        
-        if( req.user?._jid.toString() !== id){ return res.status(400).json({error: "you cannot edit other peoples profile"})}
+            if( req.user?._id.toString() !== id.toString()){
+                 return res.status(400).json({error: "you cannot edit other peoples profile"})
+                }
+         }else{
+            if( req.user?._jid !== id){ 
+                return res.status(400).json({error: "you cannot edit other peoples profile ,,"})}
+            }
 
 
         //if user id doest not exist
@@ -168,12 +175,13 @@ export const editProfile = async(req:CustomRequest,res: Response):
 
         //if using momgodb
         if(isUsingMongoDB()){
-            userToUpdate = await saveUserandUpdate(req.user.id,userToUpdate);
+            userToUpdate = await saveUserandUpdate(req.user._id,userToUpdate);
         }
         userToUpdate = await saveUserandUpdate(id,userToUpdate);
         genTokenandSetCookie(username,res)
         res.status(201).json({message:"profile updated!",userToUpdate})
-    }catch{
-        return res.status(500).json({ error: 'Internal Server Error' });
+    }catch(error){
+        console.log(error)
+        return res.status(500).json({ error: 'Internal Server Error here' });
     }
  }
