@@ -4,7 +4,7 @@ import { IUser } from '../interfaces/userInterfaces';
 import { genTokenandSetCookie } from '../utils/helpers/genTokenandSetCookie';
 import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
-let id;
+import { CustomRequest } from '../interfaces/requestInterfaces';
 
 
 // Signup user controller
@@ -42,7 +42,7 @@ export const signupUser = async (req: Request, res: Response): Promise<Response 
         return res.status(201).json({message:"Signup Successful",savedUser});
     }else{
         const newUser: IUser = {
-            id:uuidv4(),
+            _id:uuidv4(),
             username,
             email,
             password: hashedPassword, // Store the hashed password
@@ -121,22 +121,28 @@ export const getAllUsers = async (_req: Request, res: Response) : Promise<Respon
 
 
 //Edit Profile
-export const editProfile = async(req:Request,res: Response):
+export const editProfile = async(req:CustomRequest,res: Response):
  Promise<Response | any> =>{
     let {username, email, password} = req.body;
     const id = req.params.id;
+    console.log(id)
     try{
         let userToUpdate = await findUserById(id);
         const userEmailExist = await findUserByEmail(email);
         const userUsernameExist = await findUserByUsername(username);
+
+         // Access the user ID set by the protectedRoute middleware and compare with the params.id of the editing user
+        if( req.user?.id!== id){ return res.status(400).json({error: "you cannot edit other peoples profile"})}
+        
+        //if user id doest not exist
+        if(!userToUpdate){ return res.status(400).json({error: "No user found"})}  
         if(userEmailExist || userUsernameExist){
             return res.status(400).json({error: "detail already exist, add a new detail or cancel"})
         }
-        if(!userToUpdate){ return res.status(200).json({message: "No user"})}
-        if(userToUpdate?.id != id){ return res.status(200).json({message: "you cannot edit other peoples profile"})}
         userToUpdate.username = username || userToUpdate.username,
         userToUpdate.email = email || userToUpdate.email
         if (password) {
+            if(password.length < 6){return res.status(400).json({error:"password must be up to 6 characters"})}
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(password, salt);
             userToUpdate.password = hashedPassword || userToUpdate.password;

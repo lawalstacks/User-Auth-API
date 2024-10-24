@@ -16,7 +16,6 @@ export const protectedRoute = async (req: CustomRequest, res: Response, next: Ne
             return res.status(401).json({ error: "Unauthorized" });
         }
 
-        console.log(`jwt=> ${token}`)
         let decoded = jwt.verify(token, process.env.JWT_SECRET || '') as JwtPayload;
 
      // Use MongoDB if the flag is true
@@ -24,11 +23,6 @@ export const protectedRoute = async (req: CustomRequest, res: Response, next: Ne
         if (isUsingMongoDB()) {
             // MongoDB case: Find user by any (payload)
         user = await User.findById(decoded.payload).select('-password');
-        if(
-            user?._id !== decoded.payload ||
-            user?.username !== decoded.payload ||
-            user?.email !== decoded.payload
-        ){ return res.status(401).json({ error: "Unauthorized" });}
         } else {
             // JSON case: Find user by any payload
             const users:IUser[] = readUsersFromJson();
@@ -38,10 +32,10 @@ export const protectedRoute = async (req: CustomRequest, res: Response, next: Ne
             // Find user by any option(payload) in the JSON file
             user = users.find((u: any) => 
                 u.email === decoded.payload || 
-                u.id === decoded.payload ||
+                u._id === decoded.payload ||
                 u.username === decoded.payload
             );
-            console.log(user)
+
         }
         
         // If user is not found in either MongoDB or JSON

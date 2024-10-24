@@ -18,7 +18,7 @@ router.post('/auth/logout',logoutUser);
 router.get('/allprofiles',protectedRoute, getAllUsers);
 
 //edit profile, only current user can edit profile
-router.put('/profile/edit/:id',protectedRoute,editProfile)
+router.patch('/profile/edit/:id',protectedRoute,editProfile)
 
 
 export default router;

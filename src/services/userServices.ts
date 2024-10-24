@@ -83,7 +83,7 @@ export const findUserById = async (id:any): Promise<IUser | null> => {
             const users: IUser[] = readUsersFromJson();
             console.log(users)
             // Find user in the JSON file by ID
-            const user = users.find(u => u.id === id);
+            const user = users.find(u => u._id === id);
             return user || null;
         } catch (error) {
             console.error(`Error finding user by ID in JSON file: ${error}`);
@@ -102,7 +102,7 @@ export const saveUserandUpdate = async (id: any, userData: any): Promise<IUser  
         // If not using MongoDB, save to JSON file
 
         const users:IUser[] = readUsersFromJson();
-        const userIndex = users.findIndex((u: any) => u.id === id);
+        const userIndex = users.findIndex((u: any) => u._id === id);
         // If user exists, update their data
         if (userIndex !== -1) {
         // Merge the old data with the new data
