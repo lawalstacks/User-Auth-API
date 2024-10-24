@@ -176,13 +176,8 @@ export const editProfile = async(req:CustomRequest,res: Response):
         //if using momgodb
         if(isUsingMongoDB()){
             userToUpdate = await saveUserandUpdate(req.user._id,userToUpdate);
-genTokenandSetCookie(username,res)
+}
 
-       //will return 
-   return res.status(201).json({message:"profile updated!",userToUpdate})
-        }
-
-        //if without mongodb
         userToUpdate = await saveUserandUpdate(id,userToUpdate);
 genTokenandSetCookie(username,res)
         res.status(201).json({message:"profile updated!",userToUpdate})
