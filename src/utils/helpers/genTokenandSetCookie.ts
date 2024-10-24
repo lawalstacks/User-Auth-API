@@ -3,7 +3,8 @@ import jwt from 'jsonwebtoken';
 
 // Define the payload interface to accept either userId or email
 interface TokenPayload {
-    id?: any;
+    _id?: any;
+    _jid?:any;
     username?:string;
     email?: string;
 }

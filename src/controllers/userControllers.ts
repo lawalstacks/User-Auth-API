@@ -112,6 +112,7 @@ export const getAllUsers = async (_req: Request, res: Response) : Promise<Respon
     try {
         console.log("working")
         const users = await findAllUsers();
+        console.log(users)
         return res.status(200).json(users);
     } catch (error) {
         return res.status(500).json({ error: 'Internal Server Error' });
@@ -131,23 +132,40 @@ export const editProfile = async(req:CustomRequest,res: Response):
         const userEmailExist = await findUserByEmail(email);
         const userUsernameExist = await findUserByUsername(username);
 
-         // Access the user jsonId or ID set by the protectedRoute middleware and compare with the params.id of the editing user
-        if( req.user?._id.toString() !== id){ return res.status(400).json({error: "you cannot edit other peoples profile"})}
+         // Access the user id or _jid json generated ui set by the protectedRoute middleware and compare with the params.id of the editing user
+         if(isUsingMongoDB()){
+            if( req.user?._id.toString() !== id){ return res.status(400).json({error: "you cannot edit other peoples profile"})}
+         }
         
+        if( req.user?._jid.toString() !== id){ return res.status(400).json({error: "you cannot edit other peoples profile"})}
+
+
         //if user id doest not exist
-        if(!userToUpdate){ return res.status(400).json({error: "No user found"})}  
-        if(userEmailExist === email || userUsernameExist === username){
-            return res.status(400).json({error: "detail already exist, add a new detail or cancel"})
+        if(!userToUpdate){ return res.status(400).json({error: "No user found"})}
+
+        //save the updated name or remain the same and ensure uniqueness
+        if(userUsernameExist){
+            return res.status(400).json({error: "username already exist, add a new detail or cancel"})
         }
-        userToUpdate.username = username || userToUpdate.username,
+        userToUpdate.username = username || userToUpdate.username;
+
+        if(userEmailExist){
+            return res.status(400).json({error: "email already exist, add a new detail or cancel"})
+        }
         userToUpdate.email = email || userToUpdate.email
+
         if (password) {
             if(password.length < 6){return res.status(400).json({error:"password must be up to 6 characters"})}
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(password, salt);
             userToUpdate.password = hashedPassword || userToUpdate.password;
         }
-        userToUpdate = await saveUserandUpdate(req.user.id,userToUpdate);
+
+        //if using momgodb
+        if(isUsingMongoDB()){
+            userToUpdate = await saveUserandUpdate(req.user.id,userToUpdate);
+        }
+        userToUpdate = await saveUserandUpdate(id,userToUpdate);
         genTokenandSetCookie(username,res)
         res.status(201).json({message:"profile updated!",userToUpdate})
     }catch{

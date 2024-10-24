@@ -3,7 +3,6 @@ import { IUser } from '../interfaces/userInterfaces'; // Import the IUser interf
 
 // Mongoose Schema
 const UserSchema: Schema<IUser> = new Schema({
-    _jid:{type: String, unique: true},
     username: { type: String, required: true,unique: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
